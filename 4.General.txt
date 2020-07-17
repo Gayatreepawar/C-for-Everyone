@@ -1,0 +1,156 @@
+#include<stdio.h>
+#include<math.h>
+#include<stdlib.h>
+
+// Reverses a string 'str' of length 'len'
+void reverse(char* str, int len)
+{
+    int i = 0, j = len - 1, temp;
+    while (i < j) {
+        temp = str[i];
+        str[i] = str[j];
+        str[j] = temp;
+        i++;
+        j--;
+    }
+}
+
+// Converts a given integer x to string str[].
+// d is the number of digits required in the output.
+// If d is more than the number of digits in x,
+// then 0s are added at the beginning.
+int intToStr(int x, char str[], int d)
+{
+    int i = 0;
+    while (x) {
+        str[i++] = (x % 10) + '0';
+        x = x / 10;
+    }
+
+    // If number of digits required is more, then
+    // add 0s at the beginning
+    while (i < d)
+        str[i++] = '0';
+
+    reverse(str, i);
+    str[i] = '\0';
+    return i;
+}
+
+// Converts a floating-point/double number to a string.
+void ftoa(float n, char* res, int afterpoint)
+{
+    // Extract integer part
+    int ipart = (int)n;
+
+    // Extract floating part
+    float fpart = n - (float)ipart;
+
+    // convert integer part to string
+    int i = intToStr(ipart, res, 0);
+
+    // check for display option after point
+    if (afterpoint != 0) {
+        res[i] = '.'; // add dot
+
+        // Get the value of fraction part upto given no.
+        // of points after dot. The third parameter
+        // is needed to handle cases like 233.007
+        fpart = fpart * pow(10, afterpoint);
+
+        intToStr((int)fpart, res + i + 1, afterpoint);
+    }
+}
+
+void read(FILE *ptr,int d[],int *size)
+{
+    *size=0;
+    while(fscanf(ptr,"%d",&d[*size])==1)
+        (*size)++;
+}
+
+void display(FILE *ifp)
+{
+    int i;
+    rewind(ifp);
+    while((i=getc(ifp))!=EOF)
+        putc(i,stdout);
+        //printf("%d \t",d[i]);
+}
+
+double average(int d[],int size)
+{
+    int i;
+    double sum=0,avg;
+    for(i=0;i<size;i++)
+        sum=sum+d[i];
+    avg=sum/size;
+    return(avg);
+}
+int large(int d[],int size)
+{
+    int i;
+    int largest=d[0];
+    for(i=0;i<size;i++)
+    {
+        if(largest<d[i])
+        largest=d[i];
+    }
+    return(largest);
+}
+void func(FILE *ifp,FILE *ofp,double a, int max)
+{
+    int i;
+    rewind(ifp);
+    while((i=getc(ifp))!=EOF)
+    {
+        putc(i,ofp);
+    }
+    putc(10,ofp);
+    putc(32,ofp);
+    putc('A',ofp);
+    putc('V',ofp);
+    putc('G',ofp);
+    putc(61,ofp);
+    putc(32,ofp);
+    char avst[5];
+    ftoa(a,avst,2);
+    for(i=0;i<6;i++)
+    {
+        putc(avst[i],ofp);
+    }
+    putc(10,ofp);
+    putc(32,ofp);
+    putc('M',ofp);
+    putc('A',ofp);
+    putc('X',ofp);
+    putc(61,ofp);
+    putc(32,ofp);
+    int undi=max%10;
+    int tedi=(max-undi)/10;
+    putc(tedi+'0',ofp);
+    putc(undi+'0',ofp);
+}
+
+int main()
+{
+    FILE *ifp, *ofp;
+    int sz=20;
+    int data[20]={100,0};
+    ifp=fopen("hw.txt","r");
+    ofp=fopen("answer-hw3.txt","w+");
+    read(ifp,data,&sz);
+    printf("Input File: ");
+    display(ifp);
+    double a=average(data,sz);
+    int max=large(data,sz);
+    func(ifp,ofp,a,max);
+    printf("\nOutput File: ");
+    display(ofp);
+
+    printf("\nAverage is: %.2f \nMaximum number is : %d ",a,max);
+    fclose(ifp);
+    fclose(ofp);
+    return 0;
+
+}
